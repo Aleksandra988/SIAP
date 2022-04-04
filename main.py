@@ -1,17 +1,5 @@
 import pandas as pd
-from sklearn.metrics import classification_report
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
-from sklearn import metrics
-from sklearn import datasets
-from sklearn.datasets import make_classification
-from sklearn import preprocessing
-from sklearn import utils
-import numpy as np
-from sklearn import linear_model
-from sklearn import svm
-from sklearn.preprocessing import StandardScaler
-from random_forest import rf
+from random_forest_bagging import rf, bagging
 
 
 def read_dataset():
@@ -31,9 +19,9 @@ def solve_missing_values(df11, df22, df33):
     df22 = df22[df22.isnull().sum(axis=1) < col_number]
     # print((len(df22.index)))
 
-    # deleting cols with 70% missing values
+    # deleting cols with 60% missing values
     pct_null = df22.isnull().sum() / len(df22)
-    missing_features = pct_null[pct_null > 0.70].index
+    missing_features = pct_null[pct_null > 0.60].index
     # print(len(df22.columns))
     df22 = df22.drop(missing_features, axis=1)
     # print(len(df22.columns))
@@ -50,3 +38,4 @@ if __name__ == '__main__':
     df1, df2, df3 = solve_missing_values(df1, df2, df3)
 
     rf(df1, df2, df3)
+    bagging(df1, df2, df3)
