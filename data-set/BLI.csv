@@ -1,4 +1,4 @@
-Country,Dwellings_without_basic_facilities,Housing_expenditure,Rooms_per_person,Household_net_adjusted_disposable_income,Househol_net_wealth,Labour_market_insecurity,Employment_rate,Long-term_unemployment_rate,Personal_earnings,Quality_of_support_network,Educational_attainment,Student_skills,Years_in_education,Air_pollution,Water_quality,Stakeholder_engagement_for_developing_regulations,Voter_turnout,Life_expectancy,Self-reported_health,Life_satisfaction,Feeling_safe_walking_alone_at_night,Homicide_rate,Employees_working_very_long_hours,Time_devoted_to_leisure_and_personal_care
+Country,Dwellings_without_basic_facilities,Housing_expenditure,Rooms_per_person,Household_net_adjusted_disposable_income,Househol_net_wealth,Labour_market_insecurity,Employment_rate,Long_term_unemployment_rate,Personal_earnings,Quality_of_support_network,Educational_attainment,Student_skills,Years_in_education,Air_pollution,Water_quality,Stakeholder_engagement_for_developing_regulations,Voter_turnout,Life_expectancy,Self_reported_health,Life_satisfaction,Feeling_safe_walking_alone_at_night,Homicide_rate,Employees_working_very_long_hours,Time_devoted_to_leisure_and_personal_care
 Australia,,19.4,,37433,528768,3.1,73,1,55206,93,84,499,20,6.7,92,2.7,92,83,85,7.1,67,0.9,12.5,14.36
 Austria,0.8,20.8,1.6,37001,309637,2.3,72,1.3,53132,92,86,491,17,12.2,92,1.3,76,82,71,7.2,86,0.5,5.3,14.51
 Belgium,0.7,20,2.1,34884,447607,2.4,65,2.3,54327,90,80,500,19,12.8,79,2,88,82.1,74,6.8,56,1.1,4.3,15.52
@@ -36,7 +36,7 @@ Switzerland,0,21.4,1.9,39697,,,80,1.7,64824,94,89,498,17,10.1,96,2.3,45,84,81,7.
 Turkey,4.9,18.9,1,,,13,48,3.3,,85,42,462,19,27.1,62,1.5,86,78.6,67,4.9,59,1,25,14.61
 United Kingdom,0.5,23.2,2,33049,524422,3.3,75,0.9,47147,93,82,503,17,10.1,82,3.1,68,81.3,73,6.8,78,0.2,10.8,14.94
 United States,0.1,18.3,2.4,51147,684500,4.2,67,0.5,69392,94,92,495,17,7.7,88,3.1,65,78.9,88,7,78,6,10.4,14.57
-OECD - Total,3,20.3,1.7,30490,323960,5.1,66,1.3,49165,91,79,488,18,14,84,2.1,69,81,68,6.7,74,2.6,10.2,15.07
+OECD-Total,3,20.3,1.7,30490,323960,5.1,66,1.3,49165,91,79,488,18,14,84,2.1,69,81,68,6.7,74,2.6,10.2,15.07
 Non OECD Economies-Brazil,6.7,,,,,,57,,,83,57,400,16,11.7,70,2.2,80,75.9,,6.1,45,19,5.6,
 Non OECD Economies-Russia,13.8,17.4,1,19546,,,70,1.1,,89,95,481,16,11.8,62,,68,73.2,43,5.5,64,4.8,0.1,
 Non OECD Economies-South Africa,35.9,18.1,,9338,,,39,17.9,,89,48,,,28.5,72,,66,64.2,,4.9,40,13.7,15.4,
