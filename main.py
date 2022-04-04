@@ -49,4 +49,4 @@ if __name__ == '__main__':
     df1, df2, df3 = read_dataset()
     df1, df2, df3 = solve_missing_values(df1, df2, df3)
 
-    rf(df3)
+    rf(df1, df2, df3)
