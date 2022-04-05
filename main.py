@@ -2,7 +2,9 @@ import pandas as pd
 
 
 def read_dataset():
-    df_bli = pd.read_csv('data-set/BLI.csv')
+    df_bli = pd.read_csv('data-set/BLI.csv', na_values=' ')
+    print('hey')
+    print(df_bli.head())
     df_hsl = pd.read_csv('data-set/HSL.csv')
     return df_bli, df_hsl
 
@@ -30,5 +32,5 @@ def solve_missing_values(df11, df22):
 
 
 if __name__ == '__main__':
-    df1, df2 = read_dataset()
-    df1, df2 = solve_missing_values(df1, df2)
+        df1, df2 = read_dataset()
+        df1, df2 = solve_missing_values(df1, df2)
