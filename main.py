@@ -1,6 +1,6 @@
 import pandas as pd
 from random_forest_bagging import rf, bagging
-
+from lasso_regretion import lasso
 
 def read_dataset():
     df_bli = pd.read_csv('data-set/BLI.csv')
@@ -37,5 +37,8 @@ if __name__ == '__main__':
     df1, df2, df3 = read_dataset()
     df1, df2, df3 = solve_missing_values(df1, df2, df3)
 
-    rf(df1, df2, df3)
-    bagging(df1, df2, df3)
+    # rf(df1, df2, df3)
+    # bagging(df1, df2, df3)
+
+    lasso(df1,df2,df3)
+    #tunning_lasso(df2)
