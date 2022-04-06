@@ -31,13 +31,11 @@ def lasso(dataframe1, dataframe2, dataframe3):
     model3 = lasso_regretion(X3, y3)
     print(model3.predict(data3[:, 3:]))
 
+    print(len(X3))
     X1, y1 = lasso_prepair(data1, data3)
-    # model1 = lasso_regretion(X1, y1)
-    # print(model1.predict(data1[:, 1:]))
+    model1 = lasso_regretion(X1, y1)
+    print(model1.predict(data1[:, 1:]))
 
-    X2, y2 = lasso_prepair(data2, data3)
-    # model2 = lasso_regretion(X2, y2)
-    # print(model2.predict(data1[:, 1:]))
 
 
 def lasso_prepair(data1, data2):
@@ -45,8 +43,11 @@ def lasso_prepair(data1, data2):
     for d1 in data1:
         for d2 in data2:
             if d1[0] == d2[1]:
-                X.append(data1[:, 1:])
-                y.append(d2[1])
+                X.append(d1[1:])
+                y.append(d2[2])
+                break
+    print(X)
+    print(y)
     print(len(X), ',', len(y))
     return X, y
 
