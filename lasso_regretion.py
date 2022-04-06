@@ -6,14 +6,8 @@ from numpy import arange
 from sklearn.linear_model import LassoCV
 from sklearn.model_selection import RepeatedKFold
 
-
-def fxn():
-    warnings.warn("deprecated", DeprecationWarning)
-
-
 def lasso(dataframe1, dataframe2, dataframe3):
     warnings.simplefilter("ignore")
-    fxn()
     print('Beggining lasso regretion:')
     data1 = dataframe1.values
     data2 = dataframe2.values
@@ -29,16 +23,19 @@ def lasso(dataframe1, dataframe2, dataframe3):
     X3, y3 = data3[:, 3:], data3[:, 2]
     # define model evaluation method
     model3 = lasso_regretion(X3, y3)
-    print(model3.predict(data3[:, 3:]))
+    print("Data 3:",model3.predict(data3[:, 3:]))
 
     # bolje radi za data1, jer ima vise podataka
     X1, y1 = lasso_prepair(data1, data3)
+    # define model evaluation method
     model1 = lasso_regretion(X1, y1)
-    print(model1.predict(data1[:, 1:]))
+    print("Data 1:",model1.predict(data1[:, 1:]))
 
     X2, y2 = lasso_prepair(data2[:,1:], data3)
+    # define model evaluation method
     model2 = lasso_regretion(X2, y2)
-    print(model2.predict(data2[:, 2:]))
+    print("Data 2:",model2.predict(data2[:, 2:]))
+
 
 
 
@@ -61,12 +58,7 @@ def lasso_regretion(X, y):
     # define model
     model = LassoCV(alphas=arange(0, 1, 0.01), cv=cv, n_jobs=-1)
 
-    # print('Model:', model)
-    # print("X:", X)
-    # print("y:", y)
-    # fit model
     model.fit(X, y)
     # summarize chosen configuration
     print('alpha: %f' % model.alpha_)
     return model
-    # print('Test:', model.predict(data[:, 3:]))
