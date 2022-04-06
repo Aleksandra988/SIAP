@@ -2,12 +2,18 @@ import main
 import numpy as np
 import pandas as pd
 from sklearn.impute import KNNImputer
+from sklearn import preprocessing
 
 
 def solve_missing_values_knn(df1_new, df22):
     imputer = KNNImputer(missing_values=np.nan, n_neighbors=2, weights="uniform")
+
     #df11.drop()
     #df1_new = df11.drop(['Country'], axis=1)
+    x = df1_new.values  # returns a numpy array
+    min_max_scaler = preprocessing.MinMaxScaler()
+    x_scaled = min_max_scaler.fit_transform(x)
+    df1_new = pd.DataFrame(x_scaled)
     df1_new = df1_new.sort_index(axis=1)
     df1_new = imputer.fit_transform(df1_new)
     #df1_new['Country'] = df11['Country']
@@ -41,4 +47,4 @@ if __name__ == '__main__':
     print(df1_labels)
     #df1['Country'] = df1_country
     df1.insert(0, 'Country', df1.pop('Country'))
-    print(df1.head().to_markdown())
+    print(df1.to_markdown())
