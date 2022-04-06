@@ -31,10 +31,14 @@ def lasso(dataframe1, dataframe2, dataframe3):
     model3 = lasso_regretion(X3, y3)
     print(model3.predict(data3[:, 3:]))
 
-    print(len(X3))
+    # bolje radi za data1, jer ima vise podataka
     X1, y1 = lasso_prepair(data1, data3)
     model1 = lasso_regretion(X1, y1)
     print(model1.predict(data1[:, 1:]))
+
+    X2, y2 = lasso_prepair(data2[:,1:], data3)
+    model2 = lasso_regretion(X2, y2)
+    print(model2.predict(data2[:, 2:]))
 
 
 
