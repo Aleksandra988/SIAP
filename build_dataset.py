@@ -1,9 +1,10 @@
 import pandas as pd
-
+import svm
 
 def read_dataset_by_name(name):
     df = pd.read_csv('data-set/' + name + '.csv', na_values=' ')
     return df
+
 
 # removing as pct, in .. from 2017 data
 def fix_2017_dataset_labels(df):
@@ -23,6 +24,7 @@ def fix_2017_dataset_labels(df):
         df.rename(columns={col: new_label}, inplace=True)
 
     return df
+
 
 def print_dataset_labels(dataset_list):
     list_of_labels_lists = []
@@ -57,7 +59,7 @@ def find_common_labels(dataset_list):
         if allContain:
             ret_labels.append(label)
 
-    print(*ret_labels, sep="\n")
+    #print(*ret_labels, sep="\n")
     return ret_labels
 
 def prune_datasets(common_labels, dataset_list):
@@ -79,6 +81,7 @@ def read_BLI_datasets():
     df_BLI2016 = read_dataset_by_name('BLI2016')
     df_BLI2017 = read_dataset_by_name('BLI2017')
     df_BLI2018 = read_dataset_by_name('BLI2018')
+    #print(df_BLI2018.to_markdown())
 
     df_BLI2017 = fix_2017_dataset_labels(df_BLI2017)
     return [df_BLI2014, df_BLI2015, df_BLI2016, df_BLI2017, df_BLI2018]
@@ -87,9 +90,46 @@ def read_BLI_datasets():
 
 if __name__ == '__main__':
 
+
+    # merge all datasets
     bli_datasets = read_BLI_datasets()
     common_labels = find_common_labels(dataset_list=bli_datasets.copy())
     bli_datasets = prune_datasets(common_labels=common_labels, dataset_list=bli_datasets)
     bli_complete = pd.concat(bli_datasets)
-    print(bli_complete.to_markdown())
+    bli_complete.reset_index(inplace=True)
+    bli_complete.drop(['index'], axis=1, inplace=True)
+    bli_complete.sort_index(axis=1, inplace=True)
+    df1_filtered = bli_complete.loc[bli_complete['Country'].isin(
+        ['South Africa', 'Russia', 'Brazil', 'Colombia', 'Israel', 'Mexico', 'Iceland', 'Turkey', 'Sweden',
+         'Switzerland', 'Lithuania', 'Czech Republic', 'Spain', 'Japan', 'Korea', 'Denmark', 'Chile', 'Latvia',
+         'Luxembourg'])]
+
+    #print(df1_filtered.to_markdown())
+    #print(bli_complete.to_markdown())
     #print_dataset_labels(bli_datasets)
+    print()
+    df1 = bli_complete
+    list_of_unique_countries = set(df1['Country'].tolist())
+    list_of_imputed_datasets_per_country = []
+    for country in list_of_unique_countries:
+        if any(country in c for c in ['Non-OECD Economies', 'Colombia', 'Lithuania']):
+            continue
+        list_of_imputed_datasets_per_country.append(svm.solve_missing_values_knn(df1, country))
+
+    bli_imputed_complete = pd.concat(list_of_imputed_datasets_per_country)
+    bli_imputed_complete.reset_index(inplace=True)
+    bli_imputed_complete.drop(['index'], axis=1, inplace=True)
+    bli_imputed_complete.sort_index(axis=1, inplace=True)
+    print(bli_imputed_complete.to_markdown())
+    '''
+    df1 = pd.DataFrame(df1)
+    df1.set_axis(labels=df1_labels, axis=1, inplace=True)
+    #print(df1.index.is_unique)
+    #df1 = df1.drop(['Country'], axis=1)
+    #print(df1_country)
+    #print(df1['Country'] == None, 'no country column found')
+    df1['Country'] = df1_country
+    df1.insert(0, 'Country', df1.pop('Country'))
+    df1_filtered = df1.loc[df1['Country'].isin(['South Africa', 'Russia', 'Brazil', 'Colombia', 'Israel', 'Mexico', 'Iceland', 'Turkey', 'Sweden', 'Switzerland', 'Lithuania', 'Czech Republic', 'Spain', 'Japan', 'Korea', 'Denmark', 'Chile', 'Latvia', 'Luxembourg'])]
+    print(df1_filtered.to_markdown())
+    '''
