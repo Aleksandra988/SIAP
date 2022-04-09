@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 from sklearn import metrics
-from sklearn.ensemble import RandomForestClassifier, BaggingClassifier
+from sklearn.ensemble import RandomForestClassifier, BaggingClassifier, RandomForestRegressor
 from sklearn.model_selection import train_test_split, RepeatedStratifiedKFold, cross_val_score
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.preprocessing import StandardScaler
@@ -22,6 +22,8 @@ def rf(df1, df2, df3):
     df['rating'] = df['rating'].fillna(df['rating'].median().round(1))
     X2 = df[[i for i in df.columns.tolist() if i != 'Country' and i != 'Country or region' and i != 'rating']]
     y2 = df['rating']
+    # print(df.isnull())
+    # print(df['Personal earnings'])
     rf_training_and_prediction(X2, y2, "BLI.csv")
 
     # HSL.csv dataset - adding column rating from df3(2018.csv) to df1(HSL.csv) dataset
@@ -30,6 +32,30 @@ def rf(df1, df2, df3):
     X3 = dff[[i for i in dff.columns.tolist() if i != 'Country' and i != 'Country or region' and i != 'rating']]
     y3 = dff['rating']
     rf_training_and_prediction(X3, y3, "HSL.csv")
+
+
+def rf_regression(df1, df2, df3):
+    print('------------RANDOM FOREST REGRESSION-------------')
+    # 2018.csv dataset
+    X = df3[[i for i in df3.columns.tolist() if i != 'Overall rank' and i != 'Country or region' and i != 'Score']]
+    y = df3['Score']
+    rf_training_and_prediction_regression(X, y, '2018.csv')
+
+    # BLI.csv dataset - adding column rating from df3(2018.csv) to df1(BLI.csv) dataset
+    df = merge_two_datasets_regression(df1, df3)
+    df['Score'] = df['Score'].fillna(df['Score'].median().round(1))
+    X2 = df[[i for i in df.columns.tolist() if i != 'Country' and i != 'Country or region' and i != 'Score']]
+    y2 = df['Score']
+    # print(df.isnull())
+    # print(df['Personal earnings'])
+    rf_training_and_prediction_regression(X2, y2, "BLI.csv")
+
+    # HSL.csv dataset - adding column rating from df3(2018.csv) to df1(HSL.csv) dataset
+    dff = merge_two_datasets_regression(df2, df3)
+    dff['Score'] = dff['Score'].fillna(dff['Score'].median().round(1))
+    X3 = dff[[i for i in dff.columns.tolist() if i != 'Country' and i != 'Country or region' and i != 'Score']]
+    y3 = dff['Score']
+    rf_training_and_prediction_regression(X3, y3, "HSL.csv")
 
 
 def adding_column_rating(df3):
@@ -44,7 +70,23 @@ def adding_column_rating(df3):
 
 
 def merge_two_datasets(df, df3):
-    df3 = df3.drop(['Overall rank', 'Score', 'GDP per capita', 'Social support', 'Healthy life expectancy',
+    df3 = df3.drop(['Overall rank', 'GDP per capita', 'Social support', 'Healthy life expectancy',
+                    'Freedom to make life choices', 'Generosity', 'Perceptions of corruption'], axis=1)
+    return pd.merge(df, df3[['Country or region', 'rating']], left_on='Country',
+                    right_on='Country or region', how='left')
+
+
+def merge_two_datasets_regression(df, df3):
+    df3 = df3.drop(['Overall rank', 'GDP per capita', 'Social support', 'Healthy life expectancy',
+                    'Freedom to make life choices', 'Generosity', 'Perceptions of corruption'], axis=1)
+    # return pd.merge(df, df3[['Country or region', 'rating']], left_on='Country',
+    #                 right_on='Country or region', how='left')
+    return pd.merge(df, df3[['Country or region', 'Score']], left_on='Country',
+                    right_on='Country or region', how='left')
+
+
+def merge_two_datasets_bagging(df, df3):
+    df3 = df3.drop(['Overall rank', 'GDP per capita', 'Social support', 'Healthy life expectancy',
                     'Freedom to make life choices', 'Generosity', 'Perceptions of corruption'], axis=1)
     return pd.merge(df, df3[['Country or region', 'rating']], left_on='Country',
                     right_on='Country or region', how='left')
@@ -52,6 +94,21 @@ def merge_two_datasets(df, df3):
 
 def split_dataset(X, y):
     return train_test_split(X, y, test_size=.25, random_state=35)
+
+
+def rf_training_and_prediction_regression(X, y, dataset):
+    X_train, X_test, y_train, y_test = split_dataset(X, y)
+    # Normalize the data
+    # sc = StandardScaler()
+    # normed_train_data = pd.DataFrame(sc.fit_transform(training), columns=X.columns)
+    # normed_test_data = pd.DataFrame(sc.fit_transform(testing), columns=X.columns)
+    # clf = RandomForestClassifier(random_state=137)
+    clf = RandomForestRegressor(random_state=137)
+    clf.fit(X_train, y_train)
+    preds = clf.predict(X_test)
+    # print(clf.score(X_train, y_train))
+    print(clf.score(X_test, y_test))
+    # print(dataset + " Accuracy:", metrics.accuracy_score(y_test, preds))
 
 
 def rf_training_and_prediction(X, y, dataset):
@@ -63,8 +120,8 @@ def rf_training_and_prediction(X, y, dataset):
     clf = RandomForestClassifier(random_state=137)
     clf.fit(X_train, y_train)
     preds = clf.predict(X_test)
-    print(clf.score(X_train, y_train))
-    # print(clf.score(testing, testing_labels))
+    # print(clf.score(X_train, y_train))
+    print(clf.score(X_test, y_test))
     print(dataset + " Accuracy:", metrics.accuracy_score(y_test, preds))
 
 
@@ -78,14 +135,14 @@ def bagging(df1, df2, df3):
     bagging_training_and_prediction(X, y, '2018.csv')
 
     # BLI.csv dataset - adding column rating from df3(2018.csv) to df1(BLI.csv) dataset
-    df = merge_two_datasets(df1, df3)
+    df = merge_two_datasets_bagging(df1, df3)
     df['rating'] = df['rating'].fillna(df['rating'].median().round(1))
     X2 = df[[i for i in df.columns.tolist() if i != 'Country' and i != 'Country or region' and i != 'rating']]
     y2 = df['rating']
     bagging_training_and_prediction(X2, y2, "BLI.csv")
 
     # HSL.csv dataset - adding column rating from df3(2018.csv) to df1(HSL.csv) dataset
-    dff = merge_two_datasets(df2, df3)
+    dff = merge_two_datasets_bagging(df2, df3)
     dff['rating'] = dff['rating'].fillna(dff['rating'].median().round(1))
     X3 = dff[[i for i in dff.columns.tolist() if i != 'Country' and i != 'Country or region' and i != 'rating']]
     y3 = dff['rating']

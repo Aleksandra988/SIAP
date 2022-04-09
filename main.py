@@ -1,5 +1,5 @@
 import pandas as pd
-from random_forest_bagging import rf, bagging
+from random_forest_bagging import rf, bagging, rf_regression
 
 
 def read_dataset():
@@ -41,4 +41,5 @@ if __name__ == '__main__':
     df3 = fill_missing_values(df3)
 
     rf(df1, df2, df3)
+    rf_regression(df1, df2, df3)
     bagging(df1, df2, df3)
