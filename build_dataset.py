@@ -1,5 +1,7 @@
 import pandas as pd
 import svm
+import numpy as np
+
 
 def read_dataset_by_name(name):
     df = pd.read_csv('data-set/' + name + '.csv', na_values=' ')
@@ -62,6 +64,7 @@ def find_common_labels(dataset_list):
     #print(*ret_labels, sep="\n")
     return ret_labels
 
+
 def prune_datasets(common_labels, dataset_list):
     for ds in dataset_list:
         for label in ds.columns.values:
@@ -70,8 +73,66 @@ def prune_datasets(common_labels, dataset_list):
     return dataset_list
 
 
-def equalize_dataset_labels(dataset_list):
-    pass
+def replace_country_name(ds, old, new):
+    index = ds.index[ds['Country'] == old].tolist()
+    if index:
+        index = index[0]
+        ds.at[index, 'Country'] = new
+    return ds
+
+
+def sync_country_names(whr_list):
+    year = 2014
+    for whr in whr_list:
+        print(year)
+        year = year + 1
+
+        whr = replace_country_name(whr, 'South Korea', 'Korea')
+        whr = replace_country_name(whr, 'Slovakia', 'Slovak Republic')
+        whr = replace_country_name(whr, 'USA', 'United States')
+
+    print('country sync done')
+    return whr_list
+
+
+def add_happiness_ranking_to_respective_years(bli_datasets):
+
+    wh_2015 = read_dataset_by_name('whr/2015')
+    wh_2016 = read_dataset_by_name('whr/2016')
+    wh_2017 = read_dataset_by_name('whr/2017')
+    wh_2017.rename(columns={'Happiness.Score': 'Happiness Score'}, inplace=True)
+
+    wh_2018 = read_dataset_by_name('whr/2018')
+    wh_2018.rename(columns={'Score': 'Happiness Score', 'Country or region': 'Country'}, inplace=True)
+    # for now we will use 2015 results for both 2014 and 2015 BLI index cuz we're missing a 2014 WHR
+    wh_list = [wh_2015, wh_2016, wh_2017, wh_2018]
+    wh_list = sync_country_names(wh_list)
+    bli_datasets = sync_country_names(bli_datasets)
+    wh_list = [wh_list[0], wh_list[0], wh_list[1], wh_list[2], wh_list[3]]
+    unique_countries = set(bli_datasets[0]['Country'].tolist())
+    year = 2014
+    for index in range(len(bli_datasets)):
+        print(year, ' >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
+        year = year + 1
+        bli = bli_datasets[index]
+        whr = wh_list[index]
+        bli['Rating'] = np.nan
+        for country in unique_countries:
+            if any(country in c for c in ['Non-OECD Economies', 'Colombia', 'Lithuania', 'OECD - Total']):
+                continue
+            print(country)
+            #bli.query('Country == ' + country)['Rating'] = whr.query('Country == ' + country)['Happiness Score']
+            rating = whr[whr['Country'] == country]['Happiness Score'].values[0]
+            print(rating)
+            index = bli.index[bli['Country'] == country].tolist()[0]
+            print('index is ', index)
+
+            bli.at[index, 'Rating'] = rating
+            #df.loc[df.ID == 103, 'FirstName'] = "Matt"
+            #bli.loc[bli.Country == country, 'Rating'] = rating
+            #bli[bli['Country'] == country]['Rating'] = whr[whr['Country'] == country]['Happiness Score']
+            #rslt_df = dataframe[dataframe['Percentage'] > 80]
+    return bli_datasets
 
 
 def read_BLI_datasets():
@@ -81,6 +142,7 @@ def read_BLI_datasets():
     df_BLI2016 = read_dataset_by_name('BLI2016')
     df_BLI2017 = read_dataset_by_name('BLI2017')
     df_BLI2018 = read_dataset_by_name('BLI2018')
+
     #print(df_BLI2018.to_markdown())
 
     df_BLI2017 = fix_2017_dataset_labels(df_BLI2017)
@@ -88,13 +150,13 @@ def read_BLI_datasets():
     #df_WHR = read_dataset_by_name('2018')
 
 
-if __name__ == '__main__':
-
+def build_imputed_dataset():
 
     # merge all datasets
     bli_datasets = read_BLI_datasets()
     common_labels = find_common_labels(dataset_list=bli_datasets.copy())
     bli_datasets = prune_datasets(common_labels=common_labels, dataset_list=bli_datasets)
+    bli_datasets = add_happiness_ranking_to_respective_years(bli_datasets)
     bli_complete = pd.concat(bli_datasets)
     bli_complete.reset_index(inplace=True)
     bli_complete.drop(['index'], axis=1, inplace=True)
@@ -121,15 +183,8 @@ if __name__ == '__main__':
     bli_imputed_complete.drop(['index'], axis=1, inplace=True)
     bli_imputed_complete.sort_index(axis=1, inplace=True)
     print(bli_imputed_complete.to_markdown())
-    '''
-    df1 = pd.DataFrame(df1)
-    df1.set_axis(labels=df1_labels, axis=1, inplace=True)
-    #print(df1.index.is_unique)
-    #df1 = df1.drop(['Country'], axis=1)
-    #print(df1_country)
-    #print(df1['Country'] == None, 'no country column found')
-    df1['Country'] = df1_country
-    df1.insert(0, 'Country', df1.pop('Country'))
-    df1_filtered = df1.loc[df1['Country'].isin(['South Africa', 'Russia', 'Brazil', 'Colombia', 'Israel', 'Mexico', 'Iceland', 'Turkey', 'Sweden', 'Switzerland', 'Lithuania', 'Czech Republic', 'Spain', 'Japan', 'Korea', 'Denmark', 'Chile', 'Latvia', 'Luxembourg'])]
-    print(df1_filtered.to_markdown())
-    '''
+    return bli_imputed_complete, list_of_unique_countries
+
+if __name__ == '__main__':
+
+    bli_imputed_complete, countries = build_imputed_dataset()
