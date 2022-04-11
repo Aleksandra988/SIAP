@@ -112,7 +112,7 @@ def add_happiness_ranking_to_respective_years(bli_datasets):
     unique_countries = set(bli_datasets[0]['Country'].tolist())
     year = 2014
     for index in range(len(bli_datasets)):
-        print(year, ' >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
+        #print(year, ' >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
         year = year + 1
         bli = bli_datasets[index]
         whr = wh_list[index]
@@ -120,18 +120,21 @@ def add_happiness_ranking_to_respective_years(bli_datasets):
         for country in unique_countries:
             if any(country in c for c in ['Non-OECD Economies', 'Colombia', 'Lithuania', 'OECD - Total']):
                 continue
-            print(country)
+            #print(country)
             #bli.query('Country == ' + country)['Rating'] = whr.query('Country == ' + country)['Happiness Score']
             rating = whr[whr['Country'] == country]['Happiness Score'].values[0]
-            print(rating)
+            #print(rating)
             index = bli.index[bli['Country'] == country].tolist()[0]
-            print('index is ', index)
+            #print('index is ', index)
 
             bli.at[index, 'Rating'] = rating
+            #print(bli[bli['Country'] == country].to_markdown())
             #df.loc[df.ID == 103, 'FirstName'] = "Matt"
             #bli.loc[bli.Country == country, 'Rating'] = rating
             #bli[bli['Country'] == country]['Rating'] = whr[whr['Country'] == country]['Happiness Score']
             #rslt_df = dataframe[dataframe['Percentage'] > 80]
+        bli.drop(bli[bli.Rating.isnull()].index, inplace=True)
+    print(bli_datasets[0].to_markdown())
     return bli_datasets
 
 
@@ -157,6 +160,7 @@ def build_imputed_dataset():
     common_labels = find_common_labels(dataset_list=bli_datasets.copy())
     bli_datasets = prune_datasets(common_labels=common_labels, dataset_list=bli_datasets)
     bli_datasets = add_happiness_ranking_to_respective_years(bli_datasets)
+    print('happiness added')
     bli_complete = pd.concat(bli_datasets)
     bli_complete.reset_index(inplace=True)
     bli_complete.drop(['index'], axis=1, inplace=True)
@@ -173,8 +177,9 @@ def build_imputed_dataset():
     df1 = bli_complete
     list_of_unique_countries = set(df1['Country'].tolist())
     list_of_imputed_datasets_per_country = []
+    print(list_of_unique_countries)
     for country in list_of_unique_countries:
-        if any(country in c for c in ['Non-OECD Economies', 'Colombia', 'Lithuania']):
+        if any(country in c for c in ['Non-OECD Economies', 'Colombia', 'Lithuania', 'OECD - Total']):
             continue
         list_of_imputed_datasets_per_country.append(svm.solve_missing_values_knn(df1, country))
 
