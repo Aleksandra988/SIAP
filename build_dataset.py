@@ -1,3 +1,5 @@
+import csv
+
 import pandas as pd
 import svm
 import numpy as np
@@ -30,7 +32,7 @@ def fix_2017_dataset_labels(df):
 
 def print_dataset_labels(dataset_list):
     list_of_labels_lists = []
-    print('14, 15, 16, 17, 18')
+    # print('14, 15, 16, 17, 18')
     for dsl in dataset_list:
         list_of_labels_lists.append(dsl.columns)
 
@@ -84,14 +86,14 @@ def replace_country_name(ds, old, new):
 def sync_country_names(whr_list):
     year = 2014
     for whr in whr_list:
-        print(year)
+        # print(year)
         year = year + 1
 
         whr = replace_country_name(whr, 'South Korea', 'Korea')
         whr = replace_country_name(whr, 'Slovakia', 'Slovak Republic')
         whr = replace_country_name(whr, 'USA', 'United States')
 
-    print('country sync done')
+    # print('country sync done')
     return whr_list
 
 
@@ -134,7 +136,7 @@ def add_happiness_ranking_to_respective_years(bli_datasets):
             #bli[bli['Country'] == country]['Rating'] = whr[whr['Country'] == country]['Happiness Score']
             #rslt_df = dataframe[dataframe['Percentage'] > 80]
         bli.drop(bli[bli.Rating.isnull()].index, inplace=True)
-    print(bli_datasets[0].to_markdown())
+    # print(bli_datasets[0].to_markdown())
     return bli_datasets
 
 
@@ -160,7 +162,7 @@ def build_imputed_dataset():
     common_labels = find_common_labels(dataset_list=bli_datasets.copy())
     bli_datasets = prune_datasets(common_labels=common_labels, dataset_list=bli_datasets)
     bli_datasets = add_happiness_ranking_to_respective_years(bli_datasets)
-    print('happiness added')
+    # print('happiness added')
     bli_complete = pd.concat(bli_datasets)
     bli_complete.reset_index(inplace=True)
     bli_complete.drop(['index'], axis=1, inplace=True)
@@ -177,7 +179,7 @@ def build_imputed_dataset():
     df1 = bli_complete
     list_of_unique_countries = set(df1['Country'].tolist())
     list_of_imputed_datasets_per_country = []
-    print(list_of_unique_countries)
+    # print(list_of_unique_countries)
     for country in list_of_unique_countries:
         if any(country in c for c in ['Non-OECD Economies', 'Colombia', 'Lithuania', 'OECD - Total']):
             continue
@@ -187,9 +189,10 @@ def build_imputed_dataset():
     bli_imputed_complete.reset_index(inplace=True)
     bli_imputed_complete.drop(['index'], axis=1, inplace=True)
     bli_imputed_complete.sort_index(axis=1, inplace=True)
-    print(bli_imputed_complete.to_markdown())
+    # print(bli_imputed_complete.to_markdown())
     return bli_imputed_complete, list_of_unique_countries
 
 if __name__ == '__main__':
 
     bli_imputed_complete, countries = build_imputed_dataset()
+    bli_imputed_complete.to_csv(r'data-set\result.csv')
