@@ -2,9 +2,11 @@ import main
 import numpy as np
 import pandas as pd
 from sklearn.impute import KNNImputer
-from sklearn import preprocessing
+from sklearn import svm, metrics
+from sklearn.preprocessing import StandardScaler
 import build_dataset
-
+from sklearn.model_selection import train_test_split
+import matplotlib.pyplot as plt
 
 def solve_missing_values_knn(df, country):
     print('country name is ', country, '\n')
@@ -53,6 +55,8 @@ def solve_missing_values_knn(df, country):
 
 
 if __name__ == '__main__':
+
+    '''
     # df1, df2 = main.read_dataset()
     df1 = build_dataset.read_dataset_by_name('BLI')
     df2 = build_dataset.read_dataset_by_name('HSL')
@@ -80,3 +84,20 @@ if __name__ == '__main__':
     # df1['Country'] = df1_country
     df1.insert(0, 'Country', df1.pop('Country'))
     print(df1.to_markdown())
+    '''
+    df, countries = build_dataset.build_imputed_dataset()
+    X = df[[i for i in df.columns.tolist() if i != 'Rating' and i != 'Country']]
+    y = df['Rating']
+    sc_X = StandardScaler()
+    sc_y = StandardScaler()
+    X = sc_X.fit_transform(X)
+
+    y = np.array(y).reshape((len(y), 1))
+    y = sc_y.fit_transform(y)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.25, random_state=35)
+    regr = svm.SVR()
+    regr.fit(X, y)
+    preds = regr.predict(X_test)
+    preds = np.array(preds).reshape((len(preds), 1))
+    preds = sc_y.inverse_transform(preds)
+    print(regr.score(X_train, y_train))
