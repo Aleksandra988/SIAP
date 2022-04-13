@@ -53,6 +53,13 @@ def solve_missing_values_knn(df, country):
 
     return df1_per_country
 
+def draw_plot(x_test, y_test, preds, label):
+    plt.scatter(x_test, y_test, color='magenta')
+    plt.scatter(x_test, preds, color='green')
+    plt.title('Happiness analysis (rating= f(' + label + ')')
+    plt.xlabel(label)
+    plt.ylabel('Rating')
+    plt.show()
 
 if __name__ == '__main__':
 
@@ -87,17 +94,32 @@ if __name__ == '__main__':
     '''
     df, countries = build_dataset.build_imputed_dataset()
     X = df[[i for i in df.columns.tolist() if i != 'Rating' and i != 'Country']]
+    X_labels = X.columns.values
     y = df['Rating']
     sc_X = StandardScaler()
     sc_y = StandardScaler()
+    X_saved, y_saved = X, y
     X = sc_X.fit_transform(X)
 
     y = np.array(y).reshape((len(y), 1))
     y = sc_y.fit_transform(y)
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.25, random_state=35)
-    regr = svm.SVR()
-    regr.fit(X, y)
+    regr = svm.SVR(kernel='rbf')
+    regr.fit(X_train, y_train)
     preds = regr.predict(X_test)
     preds = np.array(preds).reshape((len(preds), 1))
     preds = sc_y.inverse_transform(preds)
     print(regr.score(X_train, y_train))
+    print('preds shape', preds.shape)
+    X_test = sc_X.inverse_transform(X_test)
+    x_axis = X_test[:, 9]
+    #x_axis = np.array(x_axis).reshape((len(x_axis), 1))
+    print('x_test shape', x_axis.shape)
+    #x_axis = sc_X.inverse_transform(x_axis)
+    print('X shape, y shape ', X.shape, y.shape)
+    X = sc_X.inverse_transform(X)
+    y_test = sc_y.inverse_transform(y_test)
+
+    for i in range(len(X_labels)):
+        draw_plot(X_test[:, i], y_test, preds, X_labels[i])
+
