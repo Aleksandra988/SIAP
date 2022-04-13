@@ -2,9 +2,10 @@
 import warnings
 
 # load the dataset
-from numpy import arange
+#from numpy import arange
 from sklearn.linear_model import LassoCV
 from sklearn.model_selection import RepeatedKFold
+import build_dataset
 
 def lasso(dataframe1, dataframe2, dataframe3):
     warnings.simplefilter("ignore")
@@ -56,9 +57,13 @@ def lasso_prepair(data1, data2):
 def lasso_regretion(X, y):
     cv = RepeatedKFold(n_splits=10, n_repeats=3, random_state=1)
     # define model
-    model = LassoCV(alphas=arange(0, 1, 0.01), cv=cv, n_jobs=-1)
+    model = LassoCV(alphas=build_dataset.np(0, 1, 0.01), cv=cv, n_jobs=-1)
 
     model.fit(X, y)
     # summarize chosen configuration
     print('alpha: %f' % model.alpha_)
     return model
+
+if __name__ == '__main__':
+    bli_imputed_complete, countries = build_dataset.build_imputed_dataset
+    print(bli_imputed_complete)
