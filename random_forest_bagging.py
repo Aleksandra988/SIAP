@@ -59,7 +59,7 @@ def rf_regression():
     x_ax = range(len(y_test))
     plt.plot(x_ax, y_test, label="original")
     plt.plot(x_ax, y_pred, label="predicted")
-    plt.title("Boston test and predicted data")
+    plt.title("Test and predicted data")
     plt.legend()
     plt.show()
 
