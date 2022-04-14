@@ -9,6 +9,7 @@ from sklearn.model_selection import RepeatedKFold
 import pandas as pd
 import random_forest_bagging
 from sklearn import metrics
+from matplotlib import pyplot as plt
 
 def lasso():
     warnings.simplefilter("ignore")
@@ -18,7 +19,14 @@ def lasso():
     X = dataset[[i for i in dataset.columns.tolist() if i != 'Overall rank' and i != 'Country' and i != 'Rating']]
     y = dataset['Rating']
     # define model evaluation method
-    lasso_regretion(X, y)
+    y_pred = lasso_regretion(X, y)
+
+    x_ax = range(len(y))
+    plt.plot(x_ax, y, label="original")
+    plt.plot(x_ax, y_pred, label="predicted")
+    plt.title("LASSO REGRETION-Test and predicted data")
+    plt.legend()
+    plt.show()
 
 def lasso_regretion(X, y):
 
@@ -41,3 +49,5 @@ def lasso_regretion(X, y):
     accuracy = 100 - numpy.mean(mape)
     print('Accuracy:', round(accuracy, 2), '%.')
     print(model.score(X, y))
+
+    return  y_pred
