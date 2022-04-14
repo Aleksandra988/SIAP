@@ -195,4 +195,4 @@ def build_imputed_dataset():
 if __name__ == '__main__':
 
     bli_imputed_complete, countries = build_imputed_dataset()
-    bli_imputed_complete.to_csv(r'data-set\result.csv')
+    bli_imputed_complete.to_csv(r'data-set\result.csv', index=False)
