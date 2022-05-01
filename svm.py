@@ -1,3 +1,5 @@
+import shap
+
 import main
 import numpy as np
 import pandas as pd
@@ -5,7 +7,7 @@ from sklearn.impute import KNNImputer
 from sklearn import svm, metrics
 from sklearn.preprocessing import StandardScaler
 import build_dataset
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, cross_val_score
 import matplotlib.pyplot as plt
 
 
@@ -62,6 +64,61 @@ def draw_plot(x_test, y_test, preds, label):
     plt.xlabel(label)
     plt.ylabel('Rating')
     plt.show()
+
+def sss():
+    df, countries = build_dataset.build_imputed_dataset()
+    X = df[[i for i in df.columns.tolist() if i != 'Rating' and i != 'Country']]
+    X_labels = X.columns.values
+    y = df['Rating']
+    sc_X = StandardScaler()
+    sc_y = StandardScaler()
+    X_saved, y_saved = X, y
+    X = sc_X.fit_transform(X)
+
+    y = np.array(y).reshape((len(y), 1))
+    y = sc_y.fit_transform(y)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.25, random_state=35)
+    regr = svm.SVR(kernel='rbf')
+    regr.fit(X_train, y_train)
+    preds = regr.predict(X_test)
+    preds = np.array(preds).reshape((len(preds), 1))
+    preds = sc_y.inverse_transform(preds)
+    print(regr.score(X_train, y_train))
+    print('preds shape', preds.shape)
+    print("vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv")
+    print(X_test)
+    X_test = sc_X.inverse_transform(X_test)
+    x_axis = X_test[:, 9]
+    print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+    print(X_test)
+    # x_axis = np.array(x_axis).reshape((len(x_axis), 1))
+    print('x_test shape', x_axis.shape)
+    # x_axis = sc_X.inverse_transform(x_axis)
+    print('X shape, y shape ', X.shape, y.shape)
+    y_pred = regr.predict(X_test)
+    print('Mean Absolute Error:', round(metrics.mean_absolute_error(y_test, y_pred), 2))
+    print('Mean Squared Error:', round(metrics.mean_squared_error(y_test, y_pred), 2))
+    print('Root Mean Squared Error:', round(np.sqrt(metrics.mean_squared_error(y_test, y_pred)), 2))
+    print('R2 square:', round(metrics.r2_score(y_test, y_pred), 2))
+
+    # Cross validation
+    score = cross_val_score(regr, X, y, cv=10)
+    print("Cross Validation Scores are {}".format(score))
+    print("Average Cross Validation score :{}".format(score.mean()))
+    X = sc_X.inverse_transform(X)
+    y_test = sc_y.inverse_transform(y_test)
+    # Fits the explainer
+    X_train = pd.DataFrame(X_train, columns=X_labels)
+    X_test = pd.DataFrame(X_test, columns=X_labels)
+    print(X_train)
+    explainer = shap.Explainer(regr.predict, X_train)
+    # Calculates the SHAP values - It takes some time
+    shap_values = explainer(X_test)
+    # Evaluate SHAP values
+    shap.plots.bar(shap_values)
+
+    # for i in range(len(X_labels)):
+    #     draw_plot(X_test[:, i], y_test, preds, X_labels[i])
 
 
 if __name__ == '__main__':
