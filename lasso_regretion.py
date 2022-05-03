@@ -1,6 +1,7 @@
 # use automatically configured the lasso regression algorithm
 import warnings
-
+from sklearn import preprocessing
+from sklearn.preprocessing import StandardScaler
 # load the dataset
 import numpy
 from numpy import arange
@@ -17,8 +18,10 @@ def lasso():
     dataset = pd.read_csv('data-set/result.csv')
     dataset = random_forest_bagging.adding_column_class(dataset)
     # print(df1.columns)
-
     X = dataset.drop(['Rating', 'Country', 'class', 'Rating'], axis=1)
+    X.info()
+    print(X.head())
+
     y = dataset['class']
     # define model evaluation method
     y_pred = lasso_regretion(X, y)
@@ -32,6 +35,11 @@ def lasso_regretion(X, y):
     model = LassoCV(alphas=arange(0, 1, 0.01), cv=cv, n_jobs=-1)
 
     X_train, X_test, y_train, y_test = split_dataset(X, y)
+    scaler = StandardScaler().fit(X_train[X.columns])
+
+    X_train[X.columns] = scaler.transform(X_train[X.columns])
+
+    X_test[X.columns] = scaler.transform(X_test[X.columns])
     model.fit(X_train, y_train)
 
     print('Score:', model.score(X_train,y_train))
