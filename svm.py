@@ -67,7 +67,7 @@ def draw_plot(x_test, y_test, preds, label):
 
 
 def svr():
-    df, countries = build_dataset.build_imputed_dataset()
+    df = pd.read_csv('data-set/result.csv')
     X = df[[i for i in df.columns.tolist() if i != 'Rating' and i != 'Country']]
     X_labels = X.columns.values
     y = df['Rating']
