@@ -118,3 +118,9 @@ def svr():
     print(grid.best_params_)
     print("Mean cross-validated training accuracy score:", round(grid.best_score_, 2))
 
+    y_pred = grid.predict(X_test)
+    print('Mean Absolute Error:', round(metrics.mean_absolute_error(y_test, y_pred), 2))
+    print('Mean Squared Error:', round(metrics.mean_squared_error(y_test, y_pred), 2))
+    print('Root Mean Squared Error:', round(np.sqrt(metrics.mean_squared_error(y_test, y_pred)), 2))
+    print('R2 square:', round(metrics.r2_score(y_test, y_pred), 2))
+
