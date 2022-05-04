@@ -10,4 +10,3 @@ if __name__ == '__main__':
     #xgboost_algorithm.xgboost()
     # lasso_regretion.lasso()
     svm.svr()
-    

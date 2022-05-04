@@ -4,8 +4,9 @@ import pandas as pd
 from keras.losses import MeanSquaredLogarithmicError
 from keras.models import Sequential
 from keras.layers import Dense
+from keras.optimizer_v1 import SGD
 from keras.wrappers.scikit_learn import KerasRegressor
-from matplotlib import pyplot as plt
+from matplotlib import pyplot as plt, pyplot
 from sklearn.compose import ColumnTransformer
 from sklearn.metrics import confusion_matrix, accuracy_score, mean_absolute_error, mean_squared_error
 from sklearn.model_selection import train_test_split, KFold, cross_val_score
@@ -35,18 +36,22 @@ def ann_algorithm():
 
     classifier = Sequential()
 
-    classifier.add(Dense(units=10, activation='relu', input_dim=21, kernel_initializer='normal'))
-    classifier.add(Dense(units=10, activation='relu', kernel_initializer='normal'))
-    classifier.add(Dense(units=1, kernel_initializer='normal'))
+    classifier.add(Dense(units=30, activation='relu', input_dim=21))
+    classifier.add(Dense(units=15, activation='relu'))
+    classifier.add(Dense(units=1, activation='relu'))
 
-    # loss function
-    msle = MeanSquaredLogarithmicError()
-    classifier.compile(optimizer='adam', loss=msle, metrics=['mse', 'mae'])
-    classifier.fit(X_train, y_train, batch_size=20, epochs=50, verbose=1)
-
-    y_pred = classifier.predict(X_test)
-    error = mean_absolute_error(y_test, y_pred)
-    print('MAE: %.3f' % error)
+    classifier.compile(optimizer='adam', loss='mse')
+    history = classifier.fit(X_train, y_train, batch_size=15, validation_data=(X_test, y_test), epochs=50, verbose=0)
+    # evaluate the model
+    train_mse = classifier.evaluate(X_train, y_train, verbose=0)
+    test_mse = classifier.evaluate(X_test, y_test, verbose=0)
+    print('Train: %.3f, Test: %.3f' % (train_mse, test_mse))
+    # plot loss during training
+    pyplot.title('Loss / Mean Squared Error')
+    pyplot.plot(history.history['loss'], label='train')
+    pyplot.plot(history.history['val_loss'], label='test')
+    pyplot.legend()
+    pyplot.show()
     #
     # errors = abs(y_pred[:, 1] - y_test)
     # mape = 100 * (errors / y_test)
