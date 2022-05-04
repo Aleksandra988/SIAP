@@ -7,7 +7,7 @@ from sklearn.impute import KNNImputer
 from sklearn import svm, metrics
 from sklearn.preprocessing import StandardScaler
 import build_dataset
-from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.model_selection import train_test_split, cross_val_score, GridSearchCV
 import matplotlib.pyplot as plt
 
 
@@ -65,7 +65,8 @@ def draw_plot(x_test, y_test, preds, label):
     plt.ylabel('Rating')
     plt.show()
 
-def sss():
+
+def svr():
     df, countries = build_dataset.build_imputed_dataset()
     X = df[[i for i in df.columns.tolist() if i != 'Rating' and i != 'Country']]
     X_labels = X.columns.values
@@ -78,19 +79,14 @@ def sss():
     y = np.array(y).reshape((len(y), 1))
     y = sc_y.fit_transform(y)
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.25, random_state=35)
-    regr = svm.SVR(kernel='rbf')
+    regr = svm.SVR()
     regr.fit(X_train, y_train)
     preds = regr.predict(X_test)
     preds = np.array(preds).reshape((len(preds), 1))
     preds = sc_y.inverse_transform(preds)
     print(regr.score(X_train, y_train))
-    print('preds shape', preds.shape)
-    print("vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv")
-    print(X_test)
     X_test = sc_X.inverse_transform(X_test)
     x_axis = X_test[:, 9]
-    print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-    print(X_test)
     # x_axis = np.array(x_axis).reshape((len(x_axis), 1))
     print('x_test shape', x_axis.shape)
     # x_axis = sc_X.inverse_transform(x_axis)
@@ -102,83 +98,23 @@ def sss():
     print('R2 square:', round(metrics.r2_score(y_test, y_pred), 2))
 
     # Cross validation
-    score = cross_val_score(regr, X, y, cv=10)
+    score = cross_val_score(regr, X_train, y_train, cv=10)
     print("Cross Validation Scores are {}".format(score))
     print("Average Cross Validation score :{}".format(score.mean()))
-    X = sc_X.inverse_transform(X)
-    y_test = sc_y.inverse_transform(y_test)
-    # Fits the explainer
+
+    # SHAP values
     X_train = pd.DataFrame(X_train, columns=X_labels)
     X_test = pd.DataFrame(X_test, columns=X_labels)
-    print(X_train)
     explainer = shap.Explainer(regr.predict, X_train)
     # Calculates the SHAP values - It takes some time
     shap_values = explainer(X_test)
     # Evaluate SHAP values
     shap.plots.bar(shap_values)
 
-    # for i in range(len(X_labels)):
-    #     draw_plot(X_test[:, i], y_test, preds, X_labels[i])
+    # Grid Search for hyperparameters
+    param_grid = {'C': [0.1, 1, 10, 100], 'gamma': [1, 0.1, 0.01, 0.001], 'kernel': ['rbf', 'poly', 'sigmoid']}
+    grid = GridSearchCV(regr, param_grid, refit=True, verbose=2)
+    grid.fit(X_train, y_train)
+    print(grid.best_params_)
+    print("Mean cross-validated training accuracy score:", round(grid.best_score_, 2))
 
-
-if __name__ == '__main__':
-
-    '''
-    # df1, df2 = main.read_dataset()
-    df1 = build_dataset.read_dataset_by_name('BLI')
-    df2 = build_dataset.read_dataset_by_name('HSL')
-    df1_country = df1['Country']
-    print(df1.shape)
-    # df1 = df1.drop(['Country'], axis=1)
-    df1 = df1.sort_index(axis=1)
-    print('0000')
-    print(df1.shape)
-
-    df1_labels = df1.columns.values
-    print(df1_labels.shape)
-    df1 = solve_missing_values_knn(df1)
-    # print(len(df1.columns))
-    # (df1.columns)
-    # print(df1)
-    df1 = pd.DataFrame(df1)
-    # df1.iloc[0] = df1_labels
-    print(df1.columns.values)
-    df1.set_axis(labels=df1_labels, axis=1, inplace=True)
-    # df1.insert(loc=0, column='Country', value=df1_country)
-    df1['Country'] = df1_country
-    # f1 = df1.sort_index(axis=1)
-    print(df1_labels)
-    # df1['Country'] = df1_country
-    df1.insert(0, 'Country', df1.pop('Country'))
-    print(df1.to_markdown())
-    '''
-    df, countries = build_dataset.build_imputed_dataset()
-    X = df[[i for i in df.columns.tolist() if i != 'Rating' and i != 'Country']]
-    X_labels = X.columns.values
-    y = df['Rating']
-    sc_X = StandardScaler()
-    sc_y = StandardScaler()
-    X_saved, y_saved = X, y
-    X = sc_X.fit_transform(X)
-
-    y = np.array(y).reshape((len(y), 1))
-    y = sc_y.fit_transform(y)
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.25, random_state=35)
-    regr = svm.SVR(kernel='rbf')
-    regr.fit(X_train, y_train)
-    preds = regr.predict(X_test)
-    preds = np.array(preds).reshape((len(preds), 1))
-    preds = sc_y.inverse_transform(preds)
-    print(regr.score(X_train, y_train))
-    print('preds shape', preds.shape)
-    X_test = sc_X.inverse_transform(X_test)
-    x_axis = X_test[:, 9]
-    # x_axis = np.array(x_axis).reshape((len(x_axis), 1))
-    print('x_test shape', x_axis.shape)
-    # x_axis = sc_X.inverse_transform(x_axis)
-    print('X shape, y shape ', X.shape, y.shape)
-    X = sc_X.inverse_transform(X)
-    y_test = sc_y.inverse_transform(y_test)
-
-    for i in range(len(X_labels)):
-        draw_plot(X_test[:, i], y_test, preds, X_labels[i])
