@@ -1,6 +1,11 @@
+from collections import Counter
+
 import pandas as pd
+from matplotlib import pyplot as plt
+
 import svm
 import numpy as np
+import seaborn as sns
 
 
 def read_dataset_by_name(name):
@@ -187,8 +192,9 @@ def build_imputed_dataset():
     bli_imputed_complete.reset_index(inplace=True)
     bli_imputed_complete.drop(['index'], axis=1, inplace=True)
     bli_imputed_complete.sort_index(axis=1, inplace=True)
-    # print(bli_imputed_complete.to_markdown())
+    print(bli_imputed_complete.to_markdown())
     return bli_imputed_complete, list_of_unique_countries
+
 
 if __name__ == '__main__':
 
