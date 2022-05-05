@@ -1,10 +1,8 @@
 # use automatically configured the lasso regression algorithm
 import warnings
-
 # load the dataset
 import numpy
 import shap
-from matplotlib import pyplot as plt
 from numpy import arange
 from sklearn.linear_model import LassoCV
 from sklearn.model_selection import RepeatedKFold, cross_val_score
@@ -13,30 +11,33 @@ from sklearn.preprocessing import StandardScaler
 
 import random_forest_bagging
 from sklearn import metrics
+from matplotlib import pyplot as plt
+from sklearn.model_selection import train_test_split
+
 
 def lasso():
     warnings.simplefilter("ignore")
     dataset = pd.read_csv('data-set/result.csv')
-    # dataset = random_forest_bagging.adding_column_class(dataset)
+    dataset = random_forest_bagging.adding_column_class(dataset)
     # print(df1.columns)
-    X = dataset[[i for i in dataset.columns.tolist() if i != 'Overall rank' and i != 'Country' and i != 'Rating' and i != 'Life satisfaction']]
+    X = dataset[[i for i in dataset.columns.tolist() if i != 'Overall rank' and i != 'Country' and i != 'Rating']]
     y = dataset['Rating']
     # define model evaluation method
-    y_pred = lasso_regretion(X, y)
+    lasso_regretion(X, y)
+
 
 def lasso_regretion(X, y):
-
     print('------------LASSO REGRETION-------------')
-    X_train, X_test, y_train, y_test = random_forest_bagging.split_dataset(X, y)
-    cv = RepeatedKFold(n_splits=10, n_repeats=5, random_state=35)
+    cv = RepeatedKFold(n_splits=10, n_repeats=5, random_state=1)
     # define model
     model = LassoCV(alphas=arange(0, 1, 0.01), cv=cv, n_jobs=-1)
 
-    # print(X)
-    # scaler = StandardScaler().fit(X_train)
-    # X = scaler.transform(X)
-    # print(X)
+    X_train, X_test, y_train, y_test = split_dataset(X, y)
+    scaler = StandardScaler().fit(X_train[X.columns])
 
+    X_train[X.columns] = scaler.transform(X_train[X.columns])
+
+    X_test[X.columns] = scaler.transform(X_test[X.columns])
     model.fit(X_train, y_train)
 
     # print('Score:', model.score(X,y))
@@ -56,16 +57,21 @@ def lasso_regretion(X, y):
     print('Accuracy:', round(accuracy, 2), '%.')
     print(model.score(X_test, y_test))
 
-    # x_ax = range(len(y_test))
-    # plt.plot(x_ax, y_test, label="original")
-    # plt.plot(x_ax, y_pred, label="predicted")
-    # plt.title("LASSO REGRETION-Test and predicted data")
-    # plt.legend()
-    # plt.show()
     explainer = shap.Explainer(model.predict, X_train)
     # Calculates the SHAP values - It takes some time
     shap_values = explainer(X_test)
     # Evaluate SHAP values
     shap.plots.bar(shap_values)
 
+    x_ax = range(len(y_test))
+    plt.plot(x_ax, y_test, label="original")
+    plt.plot(x_ax, y_pred, label="predicted")
+    plt.title("LASSO REGRETION-Test and predicted data")
+    plt.legend()
+    plt.show()
+
     return y_pred
+
+
+def split_dataset(X, y):
+    return train_test_split(X, y, test_size=0.25, random_state=100)
