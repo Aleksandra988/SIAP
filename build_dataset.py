@@ -195,87 +195,8 @@ def build_imputed_dataset():
     print(bli_imputed_complete.to_markdown())
     return bli_imputed_complete, list_of_unique_countries
 
-def boxplot(column, df):
-    sns.boxplot(data=df,x=df[f"{column}"])
-    plt.title(f"BLI {column}")
-    # df_outlier3 = df[(df['Air pollution'] < 30) & (df['Dwellings without basic facilities'] < 10) & (df['Educational attainment'] >40) &
-    # (df['Employees working very long hours'] > 20) &
-    #     # (df['Employees working very long hours'] < 20) &
-    #     # (df['Employment rate'] > 20) & NE TREBA
-    #     # (df['Homicide rate'] < 5) &
-    #     # (df['Household net adjusted disposable income'] < 44000) &
-    #     # (df['Household net financial wealth'] < 200000) &
-    #     # (df['Housing expenditure'] < 25) &
-    #     # (df['Life expectancy'] > 74) &
-    #     # (df['Life satisfaction'] > 20) &  ne treba
-    #     # (df['Long-term unemployment rate'] < 7.5) &
-    #     # (df['Personal earnings'] > 20) & NE TREBA
-    #     # (df['Quality of support network'] > 80) &
-    #     # (df['Rating'] > 20) & ne treba
-    #     # (df['Rooms per person'] > 20) & NE TREBA
-    #     # (df['Self-reported health'] > 40.5) &
-    #     # (df['Student skills'] > 440) &
-    #     # (df['Time devoted to leisure and personal care'] > 14) &
-    #     #     # (df['Voter turnout'] > 440) & NE TREBA
-    #     #     # (df['Water quality'] > 60) &
-    #     #     # (df['Years in education'] < 20)].copy()
-    # print(Counter(df_outlier3['conterfeit']))
-    plt.show()
 
 if __name__ == '__main__':
 
     bli_imputed_complete, countries = build_imputed_dataset()
-    # sns.boxplot(data=bli_imputed_complete, x=bli_imputed_complete["Air pollution"])
-    # plt.title("Boxplot of Swiss Banknote Length ")
-    # df_outlier1 = bli_imputed_complete[bli_imputed_complete['Air pollution'] > 40].copy()
-    # print(Counter(df_outlier1['conterfeit']))
-    # plt.show()
-    # boxplot('Air pollution', bli_imputed_complete)
-    # boxplot('Dwellings without basic facilities', bli_imputed_complete)
-    # boxplot('Educational attainment', bli_imputed_complete)
-    # boxplot('Employees working very long hours', bli_imputed_complete)
-    # boxplot('Employment rate', bli_imputed_complete)
-    # boxplot('Homicide rate', bli_imputed_complete)
-    # boxplot('Household net adjusted disposable income', bli_imputed_complete)
-    # boxplot('Household net financial wealth', bli_imputed_complete)
-    # boxplot('Housing expenditure', bli_imputed_complete)
-    # boxplot('Life expectancy', bli_imputed_complete)
-    # boxplot('Life satisfaction', bli_imputed_complete)
-    # boxplot('Long-term unemployment rate', bli_imputed_complete)
-    # boxplot('Personal earnings', bli_imputed_complete)
-    # boxplot('Quality of support network', bli_imputed_complete)
-    # boxplot('Rating', bli_imputed_complete)
-    # boxplot('Rooms per person', bli_imputed_complete)
-    # boxplot('Self-reported health', bli_imputed_complete)
-    # boxplot('Student skills', bli_imputed_complete)
-    # boxplot('Time devoted to leisure and personal care', bli_imputed_complete)
-    # boxplot('Voter turnout', bli_imputed_complete)
-    # boxplot('Water quality', bli_imputed_complete)
-    # boxplot('Years in education', bli_imputed_complete)
-
-    df_outlier3 = bli_imputed_complete[(bli_imputed_complete['Air pollution'] < 30) &
-                (bli_imputed_complete['Dwellings without basic facilities'] < 10) &
-                (bli_imputed_complete['Educational attainment'] >40) &
-                (bli_imputed_complete['Employees working very long hours'] > 20) &
-                (bli_imputed_complete['Employees working very long hours'] < 20) &
-                # (df['Employment rate'] > 20) & NE TREBA
-                (bli_imputed_complete['Homicide rate'] < 5) &
-                (bli_imputed_complete['Household net adjusted disposable income'] < 44000) &
-                (bli_imputed_complete['Household net financial wealth'] < 200000) &
-                (bli_imputed_complete['Housing expenditure'] < 25) &
-                (bli_imputed_complete['Life expectancy'] > 74) &
-                # (df['Life satisfaction'] > 20) &  ne treba
-                (bli_imputed_complete['Long-term unemployment rate'] < 7.5) &
-                # (df['Personal earnings'] > 20) & NE TREBA
-                (bli_imputed_complete['Quality of support network'] > 80) &
-                # (df['Rating'] > 20) & ne treba
-                # (df['Rooms per person'] > 20) & NE TREBA
-                (bli_imputed_complete['Self-reported health'] > 40.5) &
-                (bli_imputed_complete['Student skills'] > 440) &
-                (bli_imputed_complete['Time devoted to leisure and personal care'] > 14) &
-                # (df['Voter turnout'] > 440) & NE TREBA
-                (bli_imputed_complete['Water quality'] > 60) &
-                (bli_imputed_complete['Years in education'] < 20)].copy()
-    print(df_outlier3)
-    # print(Counter(df_outlier3['conterfeit']))
     bli_imputed_complete.to_csv(r'data-set\result.csv', index=False)

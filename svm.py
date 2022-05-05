@@ -68,7 +68,7 @@ def draw_plot(x_test, y_test, preds, label):
 
 def svr():
     df = pd.read_csv('data-set/result.csv')
-    X = df[[i for i in df.columns.tolist() if i != 'Rating' and i != 'Country']]
+    X = df[[i for i in df.columns.tolist() if i != 'Rating' and i != 'Country' and i != 'Life satisfaction']]
     X_labels = X.columns.values
     y = df['Rating']
     sc_X = StandardScaler()

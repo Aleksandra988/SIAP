@@ -21,7 +21,7 @@ def xgboost():
     dataset = pd.read_csv('data-set/result.csv')
     # dataset = random_forest_bagging.adding_column_class(dataset)
     # print(df1.columns)
-    X = dataset[[i for i in dataset.columns.tolist() if i != 'Overall rank' and i != 'Country' and i != 'Rating']]
+    X = dataset[[i for i in dataset.columns.tolist() if i != 'Overall rank' and i != 'Country' and i != 'Rating' and i != 'Life satisfaction']]
     y = dataset['Rating']
     X_train, X_test, y_train, y_test = random_forest_bagging.split_dataset(X, y)
     # fit model no training data
@@ -66,7 +66,7 @@ def xgboost():
     x_ax = range(len(y_test))
     plt.plot(x_ax, y_test, label="original")
     plt.plot(x_ax, ypred, label="predicted")
-    plt.title("RANDOM FOREST - Test and predicted data")
+    plt.title("XGBoost - Test and predicted data")
     plt.legend()
     plt.show()
 

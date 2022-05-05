@@ -19,7 +19,7 @@ def lasso():
     dataset = pd.read_csv('data-set/result.csv')
     # dataset = random_forest_bagging.adding_column_class(dataset)
     # print(df1.columns)
-    X = dataset[[i for i in dataset.columns.tolist() if i != 'Overall rank' and i != 'Country' and i != 'Rating']]
+    X = dataset[[i for i in dataset.columns.tolist() if i != 'Overall rank' and i != 'Country' and i != 'Rating' and i != 'Life satisfaction']]
     y = dataset['Rating']
     # define model evaluation method
     y_pred = lasso_regretion(X, y)

@@ -20,7 +20,7 @@ def ann_algorithm():
     dataset = pd.read_csv('data-set/result.csv')
     # dataset = adding_column_class(dataset)
     print(dataset)
-    X = pd.DataFrame(dataset.drop(['Country', 'Rating'], axis=1)).values
+    X = pd.DataFrame(dataset.drop(['Country', 'Rating', 'Life satisfaction'], axis=1)).values
     y = dataset['Rating'].values
 
     X_train, X_test, y_train, y_test = split_dataset(X, y)
@@ -36,7 +36,7 @@ def ann_algorithm():
 
     classifier = Sequential()
 
-    classifier.add(Dense(units=30, activation='relu', input_dim=21))
+    classifier.add(Dense(units=30, activation='relu', input_dim=20))
     classifier.add(Dense(units=15, activation='relu'))
     classifier.add(Dense(units=1, activation='relu'))
 

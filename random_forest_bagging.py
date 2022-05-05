@@ -15,7 +15,7 @@ import seaborn as sns
 def rf_regression():
     print('------------RANDOM FOREST REGRESSION-------------')
     dataset = pd.read_csv('data-set/result.csv')
-    X = dataset.drop(['Rating', 'Country'], axis=1)
+    X = dataset.drop(['Rating', 'Country', 'Life satisfaction'], axis=1)
     y = dataset['Rating']
     # Split the data into training and testing sets
     X_train, X_test, y_train, y_test = split_dataset(X, y)
@@ -47,19 +47,19 @@ def rf_regression():
         'n_estimators': [100, 120, 200]
     }
 
-    # gs = GridSearchCV(rf, param_grid=hyperparameter_space, scoring="r2", n_jobs=-1, cv=10,
-    #                   return_train_score=True)
-    #
-    # gs.fit(X_train, y_train)
-    # print("Optimal hyperparameter combination:", gs.best_params_)
-    # print()
-    # print("Mean cross-validated training accuracy score:", round(gs.best_score_, 2))
-    #
-    # y_predd = gs.predict(X_test)
-    # print('Mean Absolute Error:', round(metrics.mean_absolute_error(y_test, y_predd), 2))
-    # print('Mean Squared Error:', round(metrics.mean_squared_error(y_test, y_predd), 2))
-    # print('Root Mean Squared Error:', round(np.sqrt(metrics.mean_squared_error(y_test, y_predd)), 2))
-    # print('R2 square:', round(metrics.r2_score(y_test, y_predd), 2))
+    gs = GridSearchCV(rf, param_grid=hyperparameter_space, scoring="r2", n_jobs=-1, cv=10,
+                      return_train_score=True)
+
+    gs.fit(X_train, y_train)
+    print("Optimal hyperparameter combination:", gs.best_params_)
+    print()
+    print("Mean cross-validated training accuracy score:", round(gs.best_score_, 2))
+
+    y_predd = gs.predict(X_test)
+    print('Mean Absolute Error:', round(metrics.mean_absolute_error(y_test, y_predd), 2))
+    print('Mean Squared Error:', round(metrics.mean_squared_error(y_test, y_predd), 2))
+    print('Root Mean Squared Error:', round(np.sqrt(metrics.mean_squared_error(y_test, y_predd)), 2))
+    print('R2 square:', round(metrics.r2_score(y_test, y_predd), 2))
 
     # # # Calculate the absolute errors
     # errors = abs(y_pred - y_test)
@@ -121,7 +121,7 @@ def bagging():
     dataset = pd.read_csv('data-set/result.csv')
     # dataset = adding_column_class(dataset)
 
-    X = dataset.drop(['Rating', 'Country', 'Rating'], axis=1)
+    X = dataset.drop(['Rating', 'Country', 'Life satisfaction'], axis=1)
     y = dataset['Rating']
 
     X_train, X_test, y_train, y_test = split_dataset(X, y)
