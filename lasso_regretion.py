@@ -18,9 +18,9 @@ from sklearn.model_selection import train_test_split
 def lasso():
     warnings.simplefilter("ignore")
     dataset = pd.read_csv('data-set/result.csv')
-    dataset = random_forest_bagging.adding_column_class(dataset)
+    # dataset = random_forest_bagging.adding_column_class(dataset)
     # print(df1.columns)
-    X = dataset[[i for i in dataset.columns.tolist() if i != 'Overall rank' and i != 'Country' and i != 'Rating']]
+    X = dataset[[i for i in dataset.columns.tolist() if i != 'Overall rank' and i != 'Country' and i != 'Rating' and i != 'Life satisfaction']]
     y = dataset['Rating']
     # define model evaluation method
     lasso_regretion(X, y)
