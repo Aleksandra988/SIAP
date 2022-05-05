@@ -22,10 +22,10 @@ def rf_regression():
 
     rf = RandomForestRegressor(random_state=35)
     rf.fit(X_train, y_train)
-    print("Feature importance: ")
-    print(rf.feature_importances_)
-    plt.barh(X_train.columns, rf.feature_importances_)
-    plt.show()
+    # print("Feature importance: ")
+    # print(rf.feature_importances_)
+    # plt.barh(X_train.columns, rf.feature_importances_)
+    # plt.show()
     y_pred = rf.predict(X_test)
     print('Mean Absolute Error:', round(metrics.mean_absolute_error(y_test, y_pred), 2))
     print('Mean Squared Error:', round(metrics.mean_squared_error(y_test, y_pred), 2))
@@ -47,13 +47,19 @@ def rf_regression():
         'n_estimators': [100, 120, 200]
     }
 
-    gs = GridSearchCV(rf, param_grid=hyperparameter_space, scoring="r2", n_jobs=-1, cv=10,
-                      return_train_score=True)
-
-    gs.fit(X_train, y_train)
-    print("Optimal hyperparameter combination:", gs.best_params_)
-    print()
-    print("Mean cross-validated training accuracy score:", round(gs.best_score_, 2))
+    # gs = GridSearchCV(rf, param_grid=hyperparameter_space, scoring="r2", n_jobs=-1, cv=10,
+    #                   return_train_score=True)
+    #
+    # gs.fit(X_train, y_train)
+    # print("Optimal hyperparameter combination:", gs.best_params_)
+    # print()
+    # print("Mean cross-validated training accuracy score:", round(gs.best_score_, 2))
+    #
+    # y_predd = gs.predict(X_test)
+    # print('Mean Absolute Error:', round(metrics.mean_absolute_error(y_test, y_predd), 2))
+    # print('Mean Squared Error:', round(metrics.mean_squared_error(y_test, y_predd), 2))
+    # print('Root Mean Squared Error:', round(np.sqrt(metrics.mean_squared_error(y_test, y_predd)), 2))
+    # print('R2 square:', round(metrics.r2_score(y_test, y_predd), 2))
 
     # # # Calculate the absolute errors
     # errors = abs(y_pred - y_test)
@@ -68,9 +74,10 @@ def rf_regression():
     # Fits the explainer
     explainer = shap.Explainer(rf.predict, X_train)
     # Calculates the SHAP values - It takes some time
-    shap_values = explainer(X_test)
+    shap_values = explainer(X_train)
     # Evaluate SHAP values
     shap.plots.bar(shap_values)
+    # shap.summary_plot(shap_values, X_train, plot_type='dot', plot_size=[50, 6])
 
     x_ax = range(len(y_test))
     plt.plot(x_ax, y_test, label="original")

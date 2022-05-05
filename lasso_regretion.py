@@ -45,7 +45,7 @@ def lasso_regretion(X, y):
     print('Mean Squared Error:', metrics.mean_squared_error(y_test, y_pred))
     print('Root Mean Squared Error:', numpy.sqrt(metrics.mean_squared_error(y_test, y_pred)))
     print('R2 square:', round(metrics.r2_score(y_test, y_pred), 2))
-    score = cross_val_score(model, X, y, cv=10)
+    score = cross_val_score(model, X_train, y_train, cv=10)
     print("Cross Validation Scores are {}".format(score))
     print("Average Cross Validation score :{}".format(score.mean()))
 

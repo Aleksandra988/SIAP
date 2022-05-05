@@ -33,7 +33,7 @@ def xgboost():
     # plt.show()
 
     # # - cross validataion
-    score = cross_val_score(model, X, y, cv=10)
+    score = cross_val_score(model, X_train, y_train, cv=10)
     print("Cross Validation Scores are {}".format(score))
     print("Average Cross Validation score :{}".format(score.mean()))
 
